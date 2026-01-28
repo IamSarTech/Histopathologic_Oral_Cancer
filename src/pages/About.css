@@ -1,0 +1,341 @@
+/* About.css - Styles for the About page */
+
+.about-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, #f0f9ff, #e6f7ff);
+}
+
+/* Header Styles (matching Home.css) */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+}
+
+.header-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #166534;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-link {
+  color: #166534;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #16a34a;
+}
+
+/* Main Content Styles */
+.about-main {
+  flex-grow: 1;
+  padding: 2rem 1rem;
+}
+
+.about-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Hero Section */
+.about-hero {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.microscope-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.icon-green {
+  color: #16a34a;
+}
+
+.about-title {
+  font-size: 2.5rem;
+  color: #166534;
+  margin-bottom: 1rem;
+}
+
+.about-subtitle {
+  font-size: 1.1rem;
+  color: #374151;
+}
+
+/* Mission Section */
+.mission-section {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 3rem;
+}
+
+.mission-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.mission-title {
+  font-size: 1.75rem;
+  color: #166534;
+  font-weight: 600;
+}
+
+.mission-text {
+  color: #374151;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+/* How It Works Section */
+.how-it-works {
+  background-color: #f0fdf4;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 3rem;
+  border-left: 4px solid #16a34a;
+}
+
+.how-it-works-title {
+  font-size: 1.5rem;
+  color: #166534;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.step-card {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.step-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #16a34a;
+  margin-bottom: 0.75rem;
+}
+
+.step-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #166534;
+  margin-bottom: 0.5rem;
+}
+
+.step-description {
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+
+/* Classifications Section */
+.classifications-title {
+  font-size: 1.75rem;
+  color: #166534;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-weight: 600;
+}
+
+.classifications-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.classification-card {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.classification-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.classification-name {
+  font-size: 1.35rem;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.classification-description {
+  color: #374151;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.classification-details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+.details-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.details-heading {
+  font-size: 1rem;
+  color: #1f2937;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.details-list {
+  list-style-type: disc;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.details-item {
+  color: #374151;
+  line-height: 1.5;
+}
+
+/* Disclaimer Section */
+.disclaimer-section {
+  background-color: #fef2f2;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #ef4444;
+}
+
+.disclaimer-title {
+  font-size: 1.5rem;
+  color: #991b1b;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.disclaimer-text {
+  color: #374151;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.try-detection-button {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: #16a34a;
+  color: white;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.try-detection-button:hover {
+  background-color: #15803d;
+}
+
+/* Footer Styles (matching Home.css) */
+.footer {
+  background-color: #166534;
+  color: white;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.footer-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.footer-text h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.footer-text p {
+  opacity: 0.8;
+  margin-bottom: 1.5rem;
+}
+
+.copyright {
+  font-size: 0.9rem;
+  opacity: 0.6;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .nav-links {
+    margin-top: 1rem;
+  }
+
+  .about-title {
+    font-size: 2rem;
+  }
+
+  .steps-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .classification-details {
+    grid-template-columns: 1fr;
+  }
+
+  .about-hero {
+    padding: 1.5rem;
+  }
+
+  .mission-section,
+  .how-it-works,
+  .classification-card,
+  .disclaimer-section {
+    padding: 1.5rem;
+  }
+}
