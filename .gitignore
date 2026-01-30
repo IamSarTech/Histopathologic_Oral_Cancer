@@ -28,6 +28,14 @@ backend/*.pyd
 backend/.env
 
 ################################
+backend_chatbot/venv/
+backend_chatbot/__pycache__/
+backend_chatbot/*.pyc
+backend_chatbot/*.pyo
+backend_chatbot/*.pyd
+backend_chatbot/.env
+
+################################
 # ML / Model files
 ################################
 backend/model/*.h5
@@ -58,3 +66,4 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+.env

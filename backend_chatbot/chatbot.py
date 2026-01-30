@@ -1,59 +1,69 @@
 import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import google.generativeai as genai
 from dotenv import load_dotenv
+from google import genai
 
-# ✅ Load environment variables
+# Load env vars
 load_dotenv()
 
-# ✅ Fetch API Key securely
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-
-# ✅ Debugging - Check if API Key is loaded
 if not GEMINI_API_KEY:
-    raise ValueError("⚠️ Error: Missing GEMINI_API_KEY in .env file!")
+    raise RuntimeError("Missing GEMINI_API_KEY")
 
-print(f"🔍 .env file loaded: {bool(GEMINI_API_KEY)}")
-print(f"🔑 GEMINI_API_KEY: {GEMINI_API_KEY[:5]}********")  # Hiding full key for security
-
-# ✅ Initialize Flask app
 app = Flask(__name__)
-CORS(app)  # Enable CORS for frontend access
+CORS(app)
 
-# ✅ Configure Google Gemini AI
-try:
-    genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel("gemini-1.5-pro")
-except Exception as e:
-    print(f"⚠️ Error configuring Google AI: {e}")
-    model = None
+# ✅ Correct Gemini client
+client = genai.Client(api_key=GEMINI_API_KEY)
 
-# ✅ Home Route
 @app.route("/", methods=["GET"])
 def home():
-    return "✅ Flask server is running! Use the /predict endpoint to chat with AI."
+    return "✅ Medical chatbot running"
 
-# ✅ AI Chatbot Route
 @app.route("/predict", methods=["POST"])
 def predict():
-    if not model:
-        return jsonify({"reply": "⚠️ AI Model is not configured properly."}), 500
-
     try:
-        data = request.json
-        user_message = data.get("message", "").strip()
-
+        user_message = request.json.get("message", "").strip()
         if not user_message:
-            return jsonify({"reply": "⚠️ Please enter a message."}), 400
+            return jsonify({"reply": "Please enter a message"}), 400
 
-        response = model.generate_content(user_message)
+        prompt = f"""
+You are OralCure, a medical education chatbot.
+
+INSTRUCTIONS (follow exactly):
+- Output EXACTLY 5 bullet points.
+- Each bullet must be a SINGLE sentence.
+- Do NOT repeat ideas across bullets.
+- Do NOT restate the same advice in different words.
+- No introductions, headings, or summaries.
+- Educational information only (no diagnosis or treatment).
+- The FINAL bullet must advise consulting a medical professional.
+
+FORMAT (copy exactly, including bullet symbol):
+• Bullet one sentence.
+• Bullet two sentence.
+• Bullet three sentence.
+• Bullet four sentence.
+• Bullet five sentence advising consultation with a medical professional.
+
+User question:
+{user_message}
+"""
+
+
+        # ✅ CORRECT METHOD for google-genai v1.60.0
+        response = client.models.generate_content(
+            model="gemini-2.5-pro",
+            contents=prompt
+        )
+
         return jsonify({"reply": response.text})
 
     except Exception as e:
-        print(f"❌ AI Error: {e}")
-        return jsonify({"reply": "⚠️ AI chatbot encountered an error."}), 500
+        print("❌ AI ERROR:", repr(e))
+        return jsonify({"reply": "AI chatbot error"}), 500
 
-# ✅ Run Flask Server
 if __name__ == "__main__":
-    app.run(port=5000, debug=True)  # Runs on http://127.0.0.1:5000
+    # Disable reloader to avoid stale imports
+    app.run(port=5001, debug=False, use_reloader=False)

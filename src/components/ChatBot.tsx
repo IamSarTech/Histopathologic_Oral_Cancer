@@ -4,39 +4,48 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import "./ChatBot.css";
 
+type ChatMessage = {
+  sender: "user" | "bot";
+  text: string;
+};
+
 const ChatBot = () => {
   const [message, setMessage] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [chatHistory, setChatHistory] = useState<Array<{ sender: "user" | "bot"; text: string }>>([]);
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
 
   const sendMessage = async () => {
     if (!message.trim()) return;
 
     setLoading(true);
-    const newChatHistory: Array<{ sender: "user" | "bot"; text: string }> = [
+
+    const updatedHistory: ChatMessage[] = [
       ...chatHistory,
-      { sender: "user" as const, text: message }
+      { sender: "user", text: message }
     ];
-    setChatHistory(newChatHistory);
+    setChatHistory(updatedHistory);
 
     try {
-      const res = await fetch("https://14a2-103-4-221-252.ngrok-free.app/predict", {
+      const res = await fetch("https://2842b2b7020b.ngrok-free.app/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: message }),
+        body: JSON.stringify({ message }),
       });
 
-      if (!res.ok) throw new Error("Failed to fetch");
-      
+      if (!res.ok) throw new Error("API error");
+
       const data = await res.json();
-      const botResponse = data.reply || "🤖 AI did not respond.";
-      setChatHistory([...newChatHistory, { sender: "bot" as const, text: botResponse }]);
-    } catch (error) {
-      console.error("Error:", error);
+      const botReply = data.reply || "AI did not respond.";
+
       setChatHistory([
-        ...newChatHistory,
-        { sender: "bot" as const, text: "⚠ Could not connect to AI chatbot." },
+        ...updatedHistory,
+        { sender: "bot", text: botReply }
+      ]);
+    } catch (err) {
+      setChatHistory([
+        ...updatedHistory,
+        { sender: "bot", text: "⚠ Could not connect to AI chatbot." }
       ]);
     } finally {
       setMessage("");
@@ -83,10 +92,25 @@ const ChatBot = () => {
             {chatHistory.map((msg, index) => (
               <div
                 key={index}
-                className={`message ${msg.sender === "user" ? "user-message" : "bot-message"}`}
+                className={`message ${
+                  msg.sender === "user" ? "user-message" : "bot-message"
+                }`}
               >
                 <div className="message-content">
-                  {msg.text}
+                  {msg.sender === "bot" ? (
+                    <ul className="bot-bullets">
+                      {msg.text
+                        .split("\n")
+                        .filter(line => line.trim().startsWith("•"))
+                        .map((line, i) => (
+                          <li key={i}>
+                            {line.replace("•", "").trim()}
+                          </li>
+                        ))}
+                    </ul>
+                  ) : (
+                    <span>{msg.text}</span>
+                  )}
                 </div>
               </div>
             ))}
@@ -106,11 +130,7 @@ const ChatBot = () => {
               disabled={loading || !message.trim()}
               className="send-button"
             >
-              {loading ? (
-                "Thinking..."
-              ) : (
-                <Send className="h-4 w-4" />
-              )}
+              {loading ? "Thinking..." : <Send className="h-4 w-4" />}
             </Button>
           </div>
         </div>
