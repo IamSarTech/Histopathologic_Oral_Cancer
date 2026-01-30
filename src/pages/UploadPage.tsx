@@ -7,6 +7,7 @@ import "./Upload.css";
 const UploadPage = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [prediction, setPrediction] = useState<string | null>(null);
+  const [confidence, setConfidence] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [solution, setSolution] = useState("");
@@ -51,11 +52,11 @@ const UploadPage = () => {
       });
 
       const data = await response.json();
-      const predictedClass = data.prediction;
 
-      setPrediction(predictedClass);
-      setMessage(getDiseaseMessage(predictedClass));
-      setSolution(getDiseaseSolution(predictedClass));
+      setPrediction(data.prediction);
+      setConfidence(data.confidence);
+      setMessage(getDiseaseMessage(data.prediction));
+      setSolution(getDiseaseSolution(data.prediction));
     } catch (error) {
       console.error("Error uploading image:", error);
       alert("Error processing the image. Try again.");
@@ -65,7 +66,42 @@ const UploadPage = () => {
   };
 
   /* =========================
-     OSCC vs Normal logic
+     PDF generation
+  ========================= */
+  const downloadPDFReport = async () => {
+    if (!prediction || confidence === null || !selectedFile) return;
+
+    try {
+      const response = await fetch("http://127.0.0.1:5000/generate-report", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          patient_name: "Anonymous",
+          prediction: prediction,
+          confidence: confidence,
+          image_name: selectedFile.name,
+        }),
+      });
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "Oral_Cancer_Report.pdf";
+      a.click();
+
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("PDF download error:", error);
+      alert("Failed to generate PDF report.");
+    }
+  };
+
+  /* =========================
+     Disease logic
   ========================= */
   const getDiseaseMessage = (disease: string) => {
     switch (disease) {
@@ -83,35 +119,29 @@ const UploadPage = () => {
       case "Oral Cancer":
         return {
           cause:
-            "Malignant transformation of oral epithelial cells, commonly associated with prolonged exposure to carcinogenic factors.",
+            "Malignant transformation of oral epithelial cells due to prolonged exposure to carcinogenic factors.",
           conditions: [
-            "Tobacco smoking or smokeless tobacco use",
+            "Tobacco use",
             "Excessive alcohol consumption",
-            "Human Papillomavirus (HPV) infection",
-            "Chronic oral mucosal irritation",
-            "Poor oral hygiene"
+            "HPV infection",
+            "Chronic mucosal irritation",
+            "Poor oral hygiene",
           ],
           symptoms: [
             "Non-healing oral ulcer",
-            "Cellular pleomorphism and dysplasia",
+            "Cellular dysplasia",
             "Abnormal epithelial thickening",
-            "Pain, bleeding, or difficulty swallowing",
-            "Invasion into underlying connective tissue"
-          ]
+            "Pain or bleeding",
+            "Tissue invasion",
+          ],
         };
 
       case "Normal":
         return {
           cause:
-            "Normal stratified squamous epithelium with preserved cellular morphology and tissue organization.",
-          conditions: [
-            "Healthy epithelial cell layers",
-            "No dysplasia or abnormal mitotic activity"
-          ],
-          symptoms: [
-            "Normal cellular appearance",
-            "No ulceration or malignant features"
-          ]
+            "Preserved stratified squamous epithelium with normal cellular morphology.",
+          conditions: ["Healthy epithelial layers", "No dysplasia"],
+          symptoms: ["Normal cellular architecture", "No malignant features"],
         };
 
       default:
@@ -123,18 +153,18 @@ const UploadPage = () => {
     switch (disease) {
       case "Oral Cancer":
         return (
-          "1. Consult an oral pathologist, ENT specialist, or oncologist immediately.\n" +
-          "2. Histopathologic biopsy confirmation is essential.\n" +
-          "3. Early diagnosis significantly improves prognosis and treatment outcomes.\n" +
-          "4. Follow recommended clinical staging and treatment protocols."
+          "1. Consult an oral pathologist or oncologist immediately.\n" +
+          "2. Confirm diagnosis via biopsy.\n" +
+          "3. Early diagnosis improves survival outcomes.\n" +
+          "4. Follow standard clinical staging and treatment."
         );
 
       case "Normal":
         return (
-          "1. Maintain good oral hygiene practices.\n" +
-          "2. Avoid tobacco products and limit alcohol consumption.\n" +
-          "3. Schedule regular dental and oral health check-ups.\n" +
-          "4. Seek professional evaluation if any oral lesions or symptoms develop."
+          "1. Maintain good oral hygiene.\n" +
+          "2. Avoid tobacco and excessive alcohol.\n" +
+          "3. Schedule routine dental check-ups.\n" +
+          "4. Seek medical advice if symptoms arise."
         );
 
       default:
@@ -142,7 +172,7 @@ const UploadPage = () => {
     }
   };
 
-  /* =========================
+/* =========================
      UI (UNCHANGED layout)
   ========================= */
   return (
@@ -296,6 +326,12 @@ const UploadPage = () => {
                   </h3>
                   <p style={{ whiteSpace: "pre-line" }}>{solution}</p>
                 </div>
+                <div>
+                    <button onClick={downloadPDFReport} className="upload-button" style={{ width: "100%", justifyContent: "center" }}>
+                      Download PDF Report
+                    </button>
+                </div>
+                
               </div>
             </div>
           )}
@@ -321,3 +357,5 @@ const UploadPage = () => {
 };
 
 export default UploadPage;
+
+
